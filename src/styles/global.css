@@ -1,221 +1,383 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   v2 — Read.cv / Stripe Press style. See docs/v2_brief_readcv.md.
-   - Two-column resume layout (sidebar + main flow).
-   - Single emerald accent, no purple gradients, no card shadows.
-   - Inter for sans, Newsreader for serif accents (loaded in Base.astro).
+   v3 — al-folio academic profile look. See docs/v3_brief_alfolio.md (TBD).
+   - Single centered column, ~840px max width.
+   - Roboto Slab for the name, Roboto for body, monospaced fallback for dates.
+   - Light blue accent (al-folio default), zinc text.
    ────────────────────────────────────────────────────────────────────────── */
 
 @theme {
   --font-sans:
-    "Inter", "Inter var", "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+    "Roboto", "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont,
     "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-serif:
-    "Newsreader", "Source Serif 4", Georgia, serif;
+    "Roboto Slab", "Newsreader", Georgia, serif;
   --font-mono:
-    "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+    "JetBrains Mono", "Geist Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
 }
 
-/* Dark mode triggered by `.dark` class on <html>. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Tokens — zinc base + al-folio's signature light-blue accent (#0076df).
+   Dark mode keeps the same accent at higher luminance.
+   ────────────────────────────────────────────────────────────────────────── */
 :root {
   color-scheme: light;
 
-  --bg:           #fafaf9;   /* zinc-50 微暖 */
-  --bg-elevated:  #f4f4f3;   /* row hover */
-  --fg:           #18181b;   /* zinc-900 */
-  --fg-muted:     #52525b;   /* zinc-600 */
-  --fg-subtle:    #71717a;   /* zinc-500 */
-  --fg-faint:     #a1a1aa;   /* zinc-400 */
-  --hr:           rgb(228 228 231 / 0.7); /* zinc-200/70 */
-  --accent:       #059669;   /* emerald-600 */
-  --accent-hover: #047857;   /* emerald-700 */
-  --accent-soft:  #d1fae5;   /* emerald-100 */
-  --ring-offset:  #fafaf9;
+  --bg:           #ffffff;
+  --bg-elevated:  #f6f6f6;
+  --fg:           #1a1a1a;
+  --fg-muted:     #4a4a4a;
+  --fg-subtle:    #767676;
+  --fg-faint:     #a4a4a4;
+  --hr:           #e6e6e6;
+  --accent:       #0076df;
+  --accent-hover: #00509b;
 }
 
 html.dark {
   color-scheme: dark;
 
-  --bg:           #09090b;   /* zinc-950 */
-  --bg-elevated:  #18181b;   /* row hover */
-  --fg:           #fafafa;
-  --fg-muted:     #d4d4d8;   /* zinc-300 */
-  --fg-subtle:    #a1a1aa;   /* zinc-400 */
-  --fg-faint:     #71717a;   /* zinc-500 */
-  --hr:           rgb(39 39 42 / 0.6); /* zinc-800/60 */
-  --accent:       #34d399;   /* emerald-400 */
-  --accent-hover: #6ee7b7;   /* emerald-300 */
-  --accent-soft:  #064e3b;   /* emerald-900 */
-  --ring-offset:  #09090b;
+  --bg:           #1c1c1d;
+  --bg-elevated:  #232325;
+  --fg:           #f4f4f4;
+  --fg-muted:     #c4c4c4;
+  --fg-subtle:    #9b9b9b;
+  --fg-faint:     #6f6f6f;
+  --hr:           #2f2f31;
+  --accent:       #6cb8ff;
+  --accent-hover: #93cdff;
 }
 
 html {
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   background-color: var(--bg);
   color: var(--fg);
+  scroll-behavior: smooth;
+  /* Anchor offset so #publications etc. don't slide under the sticky nav. */
+  scroll-padding-top: 5.5rem;
 }
 
 body {
   background-color: var(--bg);
   color: var(--fg);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.7;
+  font-weight: 400;
 }
 
-/* CJK figures should not wear tabular-num feature. */
-:lang(zh),
-:lang(zh-Hans),
-:lang(zh-CN) {
-  font-feature-settings: "tnum" off;
-}
-
-/* Selection. */
 ::selection {
-  background-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 28%, transparent);
   color: var(--fg);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Page-enter via @starting-style (zero JS). Pure colour/opacity, no transform
-   on big blocks (brief §6 forbids transforms on layout elements).
+   Headings — Roboto Slab for the big serif title; sans for sub headings.
+   Sizing follows al-folio: huge (3rem) name, body-size everything else.
    ────────────────────────────────────────────────────────────────────────── */
-.fade-in {
-  opacity: 1;
-  transition: opacity 240ms ease;
+.name {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 4vw + 1rem, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--fg);
 }
-@starting-style {
-  .fade-in {
-    opacity: 0;
-  }
+
+.subtitle {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--fg-muted);
+}
+
+.section-h2 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+  margin-bottom: 1rem;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Link family. Default: inherit colour; hover swaps to accent.
-   No glow, no underline animation, just colour transition (brief §6).
+   Links — al-folio uses a soft underline that lifts to the accent.
    ────────────────────────────────────────────────────────────────────────── */
-.link {
-  color: inherit;
+a, .link {
+  color: var(--accent);
   text-decoration: none;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition: color 120ms ease;
 }
-.link:hover {
-  color: var(--accent);
-}
-
-/* Underlined variant for inline prose links. */
-.link-underline {
-  color: inherit;
+a:hover, .link:hover {
+  color: var(--accent-hover);
   text-decoration: underline;
-  text-decoration-color: var(--hr);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  transition: color 150ms ease, text-decoration-color 150ms ease;
-}
-.link-underline:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  text-underline-offset: 0.2em;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Focus-visible — emerald ring with proper offset against page bg.
-   ────────────────────────────────────────────────────────────────────────── */
+/* "Quiet" link variant for nav and contact icons — no colour until hover. */
+.link-quiet {
+  color: var(--fg-muted);
+}
+.link-quiet:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
 *:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Timeline row hover — full-row bg with negative inline padding so the
-   highlight bleeds beyond the text but the layout doesn't shift.
+   Page-enter fade. al-folio uses a tiny 200ms opacity transition.
    ────────────────────────────────────────────────────────────────────────── */
-.tl-row {
-  border-radius: 6px;
-  margin-inline: -0.75rem;
-  padding-inline: 0.75rem;
+.fade-in {
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+@starting-style {
+  .fade-in { opacity: 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   News list — date column (mono, narrow) + text column. al-folio classic.
+   ────────────────────────────────────────────────────────────────────────── */
+.news-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0 1.25rem;
   padding-block: 0.5rem;
-  transition: background-color 150ms ease;
+  border-bottom: 1px solid var(--hr);
+  font-size: 0.95rem;
 }
-.tl-row:hover {
-  background-color: var(--bg-elevated);
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Sidebar uppercase small-caps — Stripe Press / Read.cv signature.
-   ────────────────────────────────────────────────────────────────────────── */
-.eyebrow {
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.news-row:last-child { border-bottom: none; }
+.news-row .date {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
   color: var(--fg-subtle);
+  white-space: nowrap;
+  padding-top: 0.18rem;
 }
+.news-row .text { color: var(--fg); }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Section heading — main column h2.
+   Publication item — left thumbnail, right metadata. The al-folio shape.
    ────────────────────────────────────────────────────────────────────────── */
-.section-h2 {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.005em;
+.pub-item {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.25rem;
+  padding-block: 1.1rem;
+  border-bottom: 1px solid var(--hr);
+}
+.pub-item:last-child { border-bottom: none; }
+
+.pub-thumb {
+  width: 9rem;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pub-thumb img,
+.pub-thumb svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pub-title {
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--fg);
+  margin: 0;
+}
+.pub-authors {
+  font-size: 0.92rem;
+  color: var(--fg-muted);
+  margin-top: 0.2rem;
+  line-height: 1.5;
+}
+.pub-authors .me {
+  font-weight: 700;
   color: var(--fg);
 }
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Hairline divider between main sections. Used as <hr class="divider"/>.
-   The colour rule only — vertical margin comes from utility classes
-   (e.g. my-12) on the element itself.
-   ────────────────────────────────────────────────────────────────────────── */
-.divider {
-  border: none;
-  border-top: 1px solid var(--hr);
+.pub-venue {
+  font-size: 0.92rem;
+  color: var(--fg-subtle);
+  font-style: italic;
+  margin-top: 0.1rem;
 }
-
-/* ──────────────────────────────────────────────────────────────────────────
-   SNN spike indicator — tiny emerald dot pulsing at ~10 Hz next to the name.
-   Pure CSS keyframes; respects reduced-motion. No transform on big elements,
-   only this 7-px dot, so it doesn't break the brief's "no transform" rule.
-   ────────────────────────────────────────────────────────────────────────── */
-.spike {
+.pub-status {
   display: inline-block;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 9999px;
-  background-color: var(--accent);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
-  animation: spike-pulse 1100ms cubic-bezier(0.32, 0, 0.67, 0) infinite;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.4rem;
+  border: 1px solid var(--hr);
+  border-radius: 999px;
+  color: var(--fg-subtle);
   vertical-align: middle;
 }
-@keyframes spike-pulse {
-  0%   { transform: scale(1);    box-shadow: 0 0 0 0   color-mix(in srgb, var(--accent) 60%, transparent); }
-  6%   { transform: scale(1.45); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 0%,  transparent); }
-  18%  { transform: scale(0.95); }
-  26%  { transform: scale(1.3);  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 0%,  transparent); }
-  40%  { transform: scale(1); }
-  100% { transform: scale(1); }
+.pub-links {
+  margin-top: 0.45rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
-@media (prefers-reduced-motion: reduce) {
-  .spike { animation: none; }
+.pub-link-chip {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+}
+.pub-link-chip:hover {
+  background-color: var(--accent);
+  color: #fff;
+  text-decoration: none;
 }
 
-/* Theme transition — short fade on root, no flash. */
+@media (max-width: 640px) {
+  .pub-item {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  .pub-thumb {
+    width: 100%;
+    max-width: 14rem;
+  }
+  .news-row {
+    grid-template-columns: 5rem 1fr;
+    font-size: 0.92rem;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Avatar — circular SVG container, 240px on desktop / 180px on mobile.
+   ────────────────────────────────────────────────────────────────────────── */
+.avatar {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--hr);
+  flex-shrink: 0;
+}
+.avatar svg, .avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (max-width: 768px) {
+  .avatar {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Top nav — sticky white bar with name on the left and link list on the
+   right. Replicates al-folio's _layouts/default.html navbar.
+   ────────────────────────────────────────────────────────────────────────── */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  backdrop-filter: saturate(180%) blur(8px);
+  background-color: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-bottom: 1px solid var(--hr);
+}
+.topnav-inner {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.topnav .brand {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--fg);
+  letter-spacing: -0.005em;
+}
+.topnav .brand:hover { color: var(--accent); }
+.topnav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  font-size: 0.92rem;
+}
+.topnav-links a {
+  color: var(--fg-muted);
+}
+.topnav-links a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+@media (max-width: 640px) {
+  .topnav-inner { padding: 0.75rem 1rem; }
+  .topnav-links { gap: 1rem; font-size: 0.88rem; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Contact icon row under the bio. Subtle until hover.
+   ────────────────────────────────────────────────────────────────────────── */
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+  color: var(--fg-subtle);
+}
+.contact-row a {
+  color: var(--fg-subtle);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.contact-row a:hover {
+  color: var(--accent);
+  background-color: var(--bg-elevated);
+  text-decoration: none;
+}
+
+/* CJK figures should not wear tabular-num feature. */
+:lang(zh), :lang(zh-Hans), :lang(zh-CN) {
+  font-feature-settings: "tnum" off;
+}
+
+/* Theme transition. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 200ms;
-}
-
-/* Inline italic muted helper for "(coming soon)" placeholders. */
-.muted-italic {
-  color: var(--fg-faint);
-  font-style: italic;
 }

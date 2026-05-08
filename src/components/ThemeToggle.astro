@@ -1,7 +1,6 @@
 ---
 /**
- * Theme toggle. Sun in dark mode, moon in light mode.
- * Pinned by the parent layout (top-right of main column).
+ * Sun-in-dark / moon-in-light toggle, styled to fit inside the top nav.
  */
 ---
 
@@ -9,42 +8,15 @@
   id="theme-toggle"
   type="button"
   aria-label="Toggle color theme"
-  class="link inline-flex h-9 w-9 items-center justify-center rounded-md"
-  style="color: var(--fg-muted);"
+  class="link-quiet inline-flex h-8 w-8 items-center justify-center rounded-md"
 >
-  <!-- Sun — visible in dark mode -->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="17"
-    height="17"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.75"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    class="hidden dark:block"
-    aria-hidden="true"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block" aria-hidden="true">
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" />
     <path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" />
     <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
   </svg>
-  <!-- Moon — visible in light mode -->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="17"
-    height="17"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.75"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    class="block dark:hidden"
-    aria-hidden="true"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="block dark:hidden" aria-hidden="true">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 </button>
@@ -53,13 +25,8 @@
   const btn = document.getElementById("theme-toggle");
   if (btn) {
     btn.addEventListener("click", () => {
-      const root = document.documentElement;
-      const next = root.classList.toggle("dark") ? "dark" : "light";
-      try {
-        localStorage.setItem("theme", next);
-      } catch (_) {
-        /* noop */
-      }
+      const next = document.documentElement.classList.toggle("dark") ? "dark" : "light";
+      try { localStorage.setItem("theme", next); } catch (_) { /* noop */ }
     });
   }
 </script>

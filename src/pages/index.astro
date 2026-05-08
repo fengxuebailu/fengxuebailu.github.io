@@ -1,59 +1,22 @@
 ---
 import Base from "../layouts/Base.astro";
-import Sidebar from "../components/Sidebar.astro";
-import About from "../components/About.astro";
-import Education from "../components/Education.astro";
-import Experience from "../components/Experience.astro";
+import NavBar from "../components/NavBar.astro";
+import Hero from "../components/Hero.astro";
+import News from "../components/News.astro";
 import Publications from "../components/Publications.astro";
-import Awards from "../components/Awards.astro";
-import Projects from "../components/Projects.astro";
-import Skills from "../components/Skills.astro";
 import Footer from "../components/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
-import { site } from "../data/site";
-
-const s = site.sections;
 ---
 
 <Base>
-  <div class="mx-auto max-w-[1080px] px-6 md:px-8 py-10 md:py-14">
-    <!-- Theme toggle pinned top-right of the page -->
-    <div class="flex justify-end mb-4 lg:mb-0 lg:absolute lg:top-8 lg:right-8">
-      <ThemeToggle />
-    </div>
+  <NavBar>
+    <ThemeToggle slot="theme-toggle" />
+  </NavBar>
 
-    <div class="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-12 md:gap-16">
-      <Sidebar />
-
-      <main class="min-w-0">
-        {s.about.enabled && <About />}
-        {s.about.enabled && s.education.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.education.enabled && <Education />}
-        {s.education.enabled && s.experience.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.experience.enabled && <Experience />}
-        {s.experience.enabled && s.publications.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.publications.enabled && <Publications />}
-        {s.publications.enabled && s.awards.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.awards.enabled && <Awards />}
-        {(s.awards.enabled || s.publications.enabled) && s.projects.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.projects.enabled && <Projects />}
-        {s.projects.enabled && s.skills.enabled && (
-          <hr class="divider my-12" />
-        )}
-        {s.skills.enabled && <Skills />}
-
-        <Footer />
-      </main>
-    </div>
-  </div>
+  <main class="mx-auto max-w-[56rem] px-6 md:px-8 pb-8">
+    <Hero />
+    <Publications />
+    <News />
+    <Footer />
+  </main>
 </Base>

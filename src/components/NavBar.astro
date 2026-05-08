@@ -1,0 +1,27 @@
+---
+import { site } from "../data/site";
+
+/**
+ * Top sticky nav bar — al-folio shape: brand on the left, link list on the
+ * right. Hides "cv" automatically when site.cv is empty.
+ */
+const baseUrl = import.meta.env.BASE_URL;
+const items = site.navItems
+  .map((it) => {
+    if (it.key === "cv") {
+      return site.cv ? { ...it, href: `${baseUrl}${site.cv}` } : null;
+    }
+    return it;
+  })
+  .filter((x): x is { key: string; label: string; href: string } => x !== null);
+---
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="#about" class="brand link-quiet">{site.name.enFull}</a>
+    <nav class="topnav-links" aria-label="Primary">
+      {items.map((it) => <a href={it.href}>{it.label}</a>)}
+      <slot name="theme-toggle" />
+    </nav>
+  </div>
+</header>

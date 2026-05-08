@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+
+/**
+ * News list — al-folio classic. Date column ("May 2026") + text column.
+ * Sort newest-first by ISO date.
+ */
+const items = (await getCollection("news")).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date),
+);
+
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+---
+
+<section id="news" class="fade-in mt-16">
+  <h2 class="section-h2">news</h2>
+  <div role="list">
+    {items.map((it) => (
+      <div role="listitem" class="news-row">
+        <div class="date">{fmtDate(it.data.date)}</div>
+        <div class="text" set:html={it.data.text} />
+      </div>
+    ))}
+  </div>
+</section>

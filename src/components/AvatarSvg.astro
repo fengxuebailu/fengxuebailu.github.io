@@ -1,0 +1,75 @@
+---
+/**
+ * Abstract avatar — SNN-style spike train on a quiet gradient field.
+ * Pure SVG, no external assets. Designed to read well as a circle (clipped
+ * by .avatar) and as a square (favicon). Two languages encode the user's
+ * actual research: spiking signal + frequency band.
+ */
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 240 240"
+  role="img"
+  aria-label="Abstract spike train avatar"
+>
+  <defs>
+    <linearGradient id="avatar-bg" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f3f5f9" />
+      <stop offset="1" stop-color="#dde4ee" />
+    </linearGradient>
+    <linearGradient id="avatar-bg-dark" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27272a" />
+      <stop offset="1" stop-color="#18181b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background field. The dark variant is overlaid via CSS in dark mode. -->
+  <rect width="240" height="240" fill="url(#avatar-bg)" class="bg-light" />
+  <rect width="240" height="240" fill="url(#avatar-bg-dark)" class="bg-dark" />
+
+  <!-- Quiet horizontal baselines — three evenly-spaced rasters. -->
+  <g stroke="currentColor" stroke-width="1" opacity="0.18">
+    <line x1="24" y1="80"  x2="216" y2="80"  />
+    <line x1="24" y1="120" x2="216" y2="120" />
+    <line x1="24" y1="160" x2="216" y2="160" />
+  </g>
+
+  <!-- Spike train — three rasters, three different rhythms.
+       Drawn as plain polylines, no animation: the avatar should feel calm. -->
+  <g fill="none" stroke="#0076df" stroke-width="2.4" stroke-linejoin="miter" stroke-linecap="butt">
+    <!-- top raster (dense burst) -->
+    <polyline points="
+      24,80 56,80 56,52 60,52 60,80
+      96,80 96,52 100,52 100,80
+      132,80 132,52 136,52 136,80
+      152,80 152,52 156,52 156,80
+      216,80
+    " />
+
+    <!-- middle raster (sparse) -->
+    <polyline points="
+      24,120 76,120 76,92 80,92 80,120
+      168,120 168,92 172,92 172,120
+      216,120
+    " />
+
+    <!-- bottom raster (regular) -->
+    <polyline points="
+      24,160 60,160 60,132 64,132 64,160
+      108,160 108,132 112,132 112,160
+      156,160 156,132 160,132 160,160
+      204,160 204,132 208,132 208,160
+      216,160
+    " />
+  </g>
+
+  <style>
+    /* In dark mode the background swaps to a deep zinc gradient and the
+       baselines lighten. */
+    :where(html.dark) .bg-light { display: none; }
+    :where(html:not(.dark)) .bg-dark { display: none; }
+    :where(html.dark) g[stroke="currentColor"] { color: #e4e4e7; opacity: 0.22; }
+    :where(html.dark) g[stroke="#0076df"] { stroke: #6cb8ff; }
+  </style>
+</svg>

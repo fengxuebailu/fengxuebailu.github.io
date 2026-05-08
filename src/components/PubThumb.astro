@@ -1,0 +1,36 @@
+---
+/**
+ * Default publication thumbnail when a paper has no `thumb` set.
+ * Subtle abstract SNN raster on a light field — same visual language as
+ * the avatar, but smaller and tighter.
+ */
+---
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Paper thumbnail placeholder">
+  <defs>
+    <linearGradient id="pt-bg" x1="0" y1="0" x2="160" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f3f5f9" />
+      <stop offset="1" stop-color="#dde4ee" />
+    </linearGradient>
+    <linearGradient id="pt-bg-dark" x1="0" y1="0" x2="160" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27272a" />
+      <stop offset="1" stop-color="#18181b" />
+    </linearGradient>
+  </defs>
+  <rect width="160" height="120" fill="url(#pt-bg)" class="bg-light" />
+  <rect width="160" height="120" fill="url(#pt-bg-dark)" class="bg-dark" />
+  <g stroke="currentColor" stroke-width="1" opacity="0.16">
+    <line x1="14" y1="44" x2="146" y2="44" />
+    <line x1="14" y1="76" x2="146" y2="76" />
+  </g>
+  <g fill="none" stroke="#0076df" stroke-width="1.6">
+    <polyline points="14,44 38,44 38,28 41,28 41,44 78,44 78,28 81,28 81,44 110,44 110,28 113,28 113,44 146,44" />
+    <polyline points="14,76 50,76 50,60 53,60 53,76 100,76 100,60 103,60 103,76 146,76" />
+  </g>
+  <style>
+    :where(html.dark) .bg-light { display: none; }
+    :where(html:not(.dark)) .bg-dark { display: none; }
+    :where(html.dark) g[stroke="currentColor"] { color: #e4e4e7; opacity: 0.2; }
+    :where(html.dark) g[stroke="#0076df"] { stroke: #6cb8ff; }
+  </style>
+</svg>

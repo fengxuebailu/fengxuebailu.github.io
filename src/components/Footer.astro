@@ -3,16 +3,9 @@ import { site } from "../data/site";
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-20 pt-8" style="border-top: 1px solid var(--hr);">
+<footer class="mt-20 pt-8 pb-12" style="border-top: 1px solid var(--hr);">
   <p class="text-[12.5px]" style="color: var(--fg-faint);">
-    © {year} {site.name.enFull}. Built with
-    <a
-      href="https://astro.build"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="link-underline"
-      style="color: var(--fg-muted);"
-    >Astro</a>
-    &amp; Tailwind.
+    © {year} {site.name.enFull}. Last updated {site.lastUpdated}. Built with
+    <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a>.
   </p>
 </footer>

@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#10b981"/>
-      <stop offset="1" stop-color="#047857"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="14" fill="url(#g)"/>
-  <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle"
-        fill="#ecfdf5" font-family="Inter, system-ui, sans-serif"
-        font-weight="700" font-size="28" letter-spacing="-1">XC</text>
+  <rect width="64" height="64" rx="10" fill="#0076df"/>
+  <g fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="miter" stroke-linecap="butt">
+    <polyline points="8,40 16,40 16,22 19,22 19,40 30,40 30,22 33,22 33,40 44,40 44,22 47,22 47,40 56,40"/>
+  </g>
 </svg>

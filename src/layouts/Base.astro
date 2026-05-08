@@ -26,36 +26,31 @@ const defaultTheme = site.defaultTheme;
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
 
-    <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDesc} />
     <meta property="og:type" content="website" />
 
     <!--
-      Fonts (brief §4):
-        Inter (variable, body + Latin)
-        Newsreader (variable, optional serif accents)
-        Geist Mono (small mono for dates/meta)
+      Fonts (al-folio default):
+        Roboto       (sans body)
+        Roboto Slab  (serif headings)
+        JetBrains Mono (dates / mono)
         Noto Sans SC (CJK fallback)
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&display=swap"
     />
 
-    <!-- Theme bootstrap: read saved preference (or site default) before paint
-         to avoid FOUC. The site default overrides system preference per brief. -->
     <script is:inline define:vars={{ defaultTheme }}>
       (function () {
         try {
           const stored = localStorage.getItem("theme");
           const theme = stored ?? defaultTheme;
           if (theme === "dark") document.documentElement.classList.add("dark");
-        } catch (_) {
-          /* noop */
-        }
+        } catch (_) { /* noop */ }
       })();
     </script>
   </head>

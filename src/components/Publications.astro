@@ -1,6 +1,13 @@
 ---
 import { getCollection } from "astro:content";
-import SectionRow from "./SectionRow.astro";
+import PubThumb from "./PubThumb.astro";
+
+/**
+ * Selected Publications — al-folio shape.
+ *   [thumb 9rem] [title / authors / venue / link chips]
+ *
+ * Self-author marked with trailing "*" gets bolded via .me class.
+ */
 
 type LinkKind = "pdf" | "code" | "arxiv" | "project";
 
@@ -12,100 +19,75 @@ const pubs = (await getCollection("publications")).sort((a, b) => {
 
 const linkLabels: Record<LinkKind, string> = {
   pdf: "PDF",
-  code: "Code",
+  code: "code",
   arxiv: "arXiv",
-  project: "Project",
+  project: "project",
 };
 
-/** Highlight my own name (author entry that ends with "*"). */
 function renderAuthors(raw: string): string {
   if (!raw) return "";
   return raw
     .split(",")
     .map((name) => {
-      const trimmed = name.trim();
-      if (trimmed.endsWith("*")) {
-        const bare = trimmed.slice(0, -1);
-        return `<span class="font-medium" style="color:var(--fg);">${bare}</span>`;
-      }
-      return trimmed;
+      const t = name.trim();
+      if (t.endsWith("*")) return `<span class="me">${t.slice(0, -1)}</span>`;
+      return t;
     })
     .join(", ");
 }
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
-<section id="publications" class="fade-in">
-  <h2 class="section-h2 mb-6">Publications</h2>
-  <ol class="space-y-1">
-    {
-      pubs.map((p) => {
-        const links: { kind: LinkKind; href: string }[] = (
-          ["pdf", "code", "arxiv", "project"] as LinkKind[]
-        ).map((k) => ({ kind: k, href: (p.data[k] as string) ?? "" }));
-        const isPlaceholder = p.data.placeholder;
-
-        return (
-          <li>
-            <SectionRow date={String(p.data.year)}>
-              <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <h3
-                  class:list={[
-                    "leading-snug text-[15px]",
-                    isPlaceholder ? "italic" : "font-medium",
-                  ]}
-                  style={`color: ${isPlaceholder ? "var(--fg-faint)" : "var(--fg)"};`}
-                >
-                  {p.data.title}
-                </h3>
-                {p.data.status && (
-                  <span
-                    class="italic text-[13px] tracking-wide"
-                    style="color: var(--fg-subtle);"
-                  >
-                    {p.data.status}
-                  </span>
-                )}
-              </div>
-              {!isPlaceholder && p.data.authors && (
-                <p
-                  class="mt-0.5 text-[14px] leading-snug"
-                  style="color: var(--fg-muted);"
-                  set:html={renderAuthors(p.data.authors)}
-                />
-              )}
-              {!isPlaceholder && p.data.venue && (
-                <p
-                  class="mt-0.5 text-[14px] leading-snug italic"
-                  style="color: var(--fg-muted);"
-                >
-                  {p.data.venue}
-                </p>
-              )}
-              {links.some((l) => l.href.length > 0) && (
-                <p class="mt-1 text-[13px]">
-                  {links
-                    .filter((l) => l.href.length > 0)
-                    .map((l, i) => (
-                      <>
-                        {i > 0 && (
-                          <span style="color: var(--fg-subtle);"> · </span>
-                        )}
-                        <a
-                          href={l.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="link-underline"
-                        >
-                          {linkLabels[l.kind]}
-                        </a>
-                      </>
-                    ))}
-                </p>
-              )}
-            </SectionRow>
-          </li>
-        );
-      })
-    }
-  </ol>
+<section id="publications" class="fade-in mt-16">
+  <h2 class="section-h2">selected publications</h2>
+  <div role="list">
+    {pubs.map((p) => {
+      const links: { kind: LinkKind; href: string }[] = (
+        ["pdf", "code", "arxiv", "project"] as LinkKind[]
+      )
+        .map((k) => ({ kind: k, href: (p.data[k] as string) ?? "" }))
+        .filter((l) => l.href.length > 0);
+      const isPlaceholder = p.data.placeholder;
+      const titleClass = isPlaceholder ? "pub-title italic" : "pub-title";
+      return (
+        <article role="listitem" class="pub-item">
+          <div class="pub-thumb" aria-hidden="true">
+            {p.data.thumb ? (
+              <img src={`${baseUrl}${p.data.thumb}`} alt="" />
+            ) : (
+              <PubThumb />
+            )}
+          </div>
+          <div class="min-w-0">
+            <h3 class={titleClass} style={isPlaceholder ? "color: var(--fg-muted);" : undefined}>
+              {p.data.title}
+              {p.data.status && <span class="pub-status">{p.data.status}</span>}
+            </h3>
+            {p.data.authors && (
+              <p class="pub-authors" set:html={renderAuthors(p.data.authors)} />
+            )}
+            {p.data.venue && (
+              <p class="pub-venue">
+                {p.data.venue}
+                {p.data.year && <span> · {p.data.year}</span>}
+              </p>
+            )}
+            {!p.data.venue && p.data.year && (
+              <p class="pub-venue">{p.data.year}</p>
+            )}
+            {links.length > 0 && (
+              <p class="pub-links">
+                {links.map((l) => (
+                  <a class="pub-link-chip" href={l.href} target="_blank" rel="noopener noreferrer">
+                    {linkLabels[l.kind]}
+                  </a>
+                ))}
+              </p>
+            )}
+          </div>
+        </article>
+      );
+    })}
+  </div>
 </section>
