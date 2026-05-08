@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import Section from "./Section.astro";
+import SectionRow from "./SectionRow.astro";
 
 type LinkKind = "pdf" | "code" | "arxiv" | "project";
 
@@ -10,47 +10,33 @@ const pubs = (await getCollection("publications")).sort((a, b) => {
   return bo - ao;
 });
 
-/** Highlight the author whose name is followed by `*`. */
-function renderAuthors(raw: string): string {
-  return raw
-    .split(",")
-    .map((name) => {
-      const trimmed = name.trim();
-      if (trimmed.endsWith("*")) {
-        const bare = trimmed.slice(0, -1);
-        return `<span class="font-medium text-emerald-700 dark:text-emerald-400">${bare}</span><span class="text-emerald-500">*</span>`;
-      }
-      return trimmed;
-    })
-    .join(", ");
-}
-
 const linkLabels: Record<LinkKind, string> = {
   pdf: "PDF",
   code: "Code",
   arxiv: "arXiv",
   project: "Project",
 };
+
+/** Highlight my own name (author entry that ends with "*"). */
+function renderAuthors(raw: string): string {
+  if (!raw) return "";
+  return raw
+    .split(",")
+    .map((name) => {
+      const trimmed = name.trim();
+      if (trimmed.endsWith("*")) {
+        const bare = trimmed.slice(0, -1);
+        return `<span class="font-medium" style="color:var(--fg);">${bare}</span>`;
+      }
+      return trimmed;
+    })
+    .join(", ");
+}
 ---
 
-<Section
-  id="publications"
-  title="Publications"
-  subtitle="* denotes my contribution."
->
-  <!-- Bilingual notice banner -->
-  <div
-    class="mb-6 rounded-lg border border-amber-200 bg-amber-50/70 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200 fade-up"
-  >
-    <p class="font-medium">
-      Updated as papers come in — placeholders below.
-    </p>
-    <p class="mt-0.5 text-amber-700 dark:text-amber-300/90">
-      论文逐步更新，下方为占位条目。
-    </p>
-  </div>
-
-  <ol class="space-y-4 fade-stagger">
+<section id="publications" class="fade-in">
+  <h2 class="section-h2 mb-6">Publications</h2>
+  <ol class="space-y-1">
     {
       pubs.map((p) => {
         const links: { kind: LinkKind; href: string }[] = (
@@ -59,60 +45,67 @@ const linkLabels: Record<LinkKind, string> = {
         const isPlaceholder = p.data.placeholder;
 
         return (
-          <li
-            class:list={[
-              "rounded-xl border p-5 transition",
-              isPlaceholder
-                ? "border-dashed border-zinc-300 bg-white/50 dark:border-zinc-700 dark:bg-zinc-900/40"
-                : "border-zinc-200 bg-white shadow-sm hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700",
-            ]}
-          >
-            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-50">
-                {p.data.title}
-              </h3>
-              <span class="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                {p.data.year}
-              </span>
-            </div>
-            <p
-              class="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
-              set:html={renderAuthors(p.data.authors)}
-            />
-            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              <span class="italic">{p.data.venue}</span>
-              {p.data.status && (
-                <span class="ml-2 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-[11px] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
-                  {p.data.status}
-                </span>
-              )}
-            </p>
-
-            <div class="mt-3 flex flex-wrap gap-2">
-              {links.map(({ kind, href }) => {
-                const enabled = href && href.length > 0;
-                return enabled ? (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 transition hover:border-emerald-500/40 hover:text-emerald-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-emerald-400/40 dark:hover:text-emerald-400"
-                  >
-                    {linkLabels[kind]}
-                  </a>
-                ) : (
+          <li>
+            <SectionRow date={String(p.data.year)}>
+              <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <h3
+                  class:list={[
+                    "leading-snug text-[15px]",
+                    isPlaceholder ? "italic" : "font-medium",
+                  ]}
+                  style={`color: ${isPlaceholder ? "var(--fg-faint)" : "var(--fg)"};`}
+                >
+                  {p.data.title}
+                </h3>
+                {p.data.status && (
                   <span
-                    title="TODO: link not available yet"
-                    class="inline-flex cursor-not-allowed items-center rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-600"
+                    class="italic text-[13px] tracking-wide"
+                    style="color: var(--fg-subtle);"
                   >
-                    {linkLabels[kind]}
+                    {p.data.status}
                   </span>
-                );
-              })}
-            </div>
+                )}
+              </div>
+              {!isPlaceholder && p.data.authors && (
+                <p
+                  class="mt-0.5 text-[14px] leading-snug"
+                  style="color: var(--fg-muted);"
+                  set:html={renderAuthors(p.data.authors)}
+                />
+              )}
+              {!isPlaceholder && p.data.venue && (
+                <p
+                  class="mt-0.5 text-[14px] leading-snug italic"
+                  style="color: var(--fg-muted);"
+                >
+                  {p.data.venue}
+                </p>
+              )}
+              {links.some((l) => l.href.length > 0) && (
+                <p class="mt-1 text-[13px]">
+                  {links
+                    .filter((l) => l.href.length > 0)
+                    .map((l, i) => (
+                      <>
+                        {i > 0 && (
+                          <span style="color: var(--fg-subtle);"> · </span>
+                        )}
+                        <a
+                          href={l.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link-underline"
+                        >
+                          {linkLabels[l.kind]}
+                        </a>
+                      </>
+                    ))}
+                </p>
+              )}
+            </SectionRow>
           </li>
         );
       })
     }
   </ol>
-</Section>
+</section>

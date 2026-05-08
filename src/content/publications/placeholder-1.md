@@ -1,13 +1,7 @@
 ---
-title: "[Paper title placeholder — replace once available]"
-authors: "Xiao Chenyang*, Coauthor A, Coauthor B"
-venue: "Venue / Workshop"
+title: "Title forthcoming"
 year: 2026
-status: "Under review"
+status: "in preparation"
 order: 100
 placeholder: true
-pdf: ""
-code: ""
-arxiv: ""
-project: ""
 ---

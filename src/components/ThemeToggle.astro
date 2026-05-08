@@ -1,23 +1,26 @@
 ---
-// Inline SVGs so we don't need a runtime framework. The script swaps which
-// icon is hidden based on the current theme.
+/**
+ * Theme toggle. Sun in dark mode, moon in light mode.
+ * Pinned by the parent layout (top-right of main column).
+ */
 ---
 
 <button
   id="theme-toggle"
   type="button"
   aria-label="Toggle color theme"
-  class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-200 bg-white/60 text-zinc-700 backdrop-blur transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-50"
+  class="link inline-flex h-9 w-9 items-center justify-center rounded-md"
+  style="color: var(--fg-muted);"
 >
-  <!-- Sun icon — visible in dark mode -->
+  <!-- Sun — visible in dark mode -->
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
+    width="17"
+    height="17"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    stroke-width="2"
+    stroke-width="1.75"
     stroke-linecap="round"
     stroke-linejoin="round"
     class="hidden dark:block"
@@ -28,15 +31,15 @@
     <path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" />
     <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
   </svg>
-  <!-- Moon icon — visible in light mode -->
+  <!-- Moon — visible in light mode -->
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
+    width="17"
+    height="17"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    stroke-width="2"
+    stroke-width="1.75"
     stroke-linecap="round"
     stroke-linejoin="round"
     class="block dark:hidden"

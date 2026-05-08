@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import SectionRow from "./SectionRow.astro";
+
+const items = (await getCollection("awards")).sort(
+  (a, b) => (b.data.order ?? 0) - (a.data.order ?? 0),
+);
+---
+
+<section id="awards" class="fade-in">
+  <h2 class="section-h2 mb-6">Awards</h2>
+  {items.length === 0 ? (
+    <p class="muted-italic text-[14px] leading-7">
+      To be filled.
+    </p>
+  ) : (
+    <ol class="space-y-1">
+      {items.map((it) => (
+        <li>
+          <SectionRow date={it.data.period}>
+            <div class="font-medium leading-snug" style="color: var(--fg);">
+              {it.data.title}
+            </div>
+            {it.data.description && (
+              <p
+                class="text-[14px] mt-1 leading-relaxed"
+                style="color: var(--fg-muted);"
+              >
+                {it.data.description}
+              </p>
+            )}
+          </SectionRow>
+        </li>
+      ))}
+    </ol>
+  )}
+</section>

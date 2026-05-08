@@ -1,26 +1,20 @@
 ---
-import Section from "./Section.astro";
+/**
+ * About — two short paragraphs in CN + EN, no decoration.
+ */
 ---
 
-<Section id="about" title="About" flush>
-  <div
-    class="space-y-4 text-[15px] leading-7 text-zinc-700 dark:text-zinc-300 fade-up"
-  >
-    <p>
-      <span class="text-zinc-900 dark:text-zinc-100"
-        >[TODO: 用户填写一段中文自我介绍]</span
-      >
-      — 例：我是 BIT 计算机学院本科生，研究方向是脉冲神经网络与图像生成。当前关注事件驱动表征与低能耗视觉模型。
+<section id="about" class="fade-in">
+  <h2 class="section-h2 mb-6">About</h2>
+  <div class="space-y-4 text-[15px] leading-[1.75]" style="color: var(--fg);">
+    <p lang="zh-Hans">
+      北京理工大学 2023 级本科生，目前在校就读，研究兴趣覆盖脉冲神经网络（SNN）与图像生成。关注类脑计算与现代生成模型的交叉，希望在这个方向继续深入读研究生。
     </p>
     <p>
-      [TODO: replace this English paragraph] — Currently exploring how
-      biologically-inspired Spiking Neural Networks can be combined with
-      modern generative models. Interested in efficient, event-driven
-      representations and low-power vision systems.
-    </p>
-    <p class="text-zinc-500 dark:text-zinc-400">
-      Outside of research:
-      <span class="italic">[TODO: 兴趣 / hobbies / 其他]</span>.
+      Currently exploring how biologically-inspired computation can intersect
+      with modern generative methods. Interested in efficient, event-driven
+      representations and how they can compose with diffusion / flow-based
+      image generation.
     </p>
   </div>
-</Section>
+</section>

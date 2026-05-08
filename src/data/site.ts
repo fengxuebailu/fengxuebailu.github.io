@@ -1,27 +1,34 @@
 /**
- * Site-wide data.  Edit THIS FILE to update name, email, GitHub, research
- * interests, and other globals.  Every component imports from here.
- *
- * TODO checklist (user, replace these placeholders):
- *   [ ] name.zh         — 中文姓名
- *   [ ] name.enFull     — Confirm pinyin (currently "Xiao Chenyang")
- *   [ ] tagline         — One-line identity
- *   [ ] education[0]    — Confirm school / major / dates
- *   [ ] avatarInitials  — Optional: replace gradient block with photo later
+ * Site-wide data. Edit this file to update name, contact, research interests
+ * and toggle which sections render. Every component imports from here.
  */
 
 export type SocialLink = {
   label: string;
   href: string;
-  /** lucide-static icon name, see https://lucide.dev/icons */
+  /** lucide-style key. Only the icons we render are listed. */
   icon: "mail" | "github" | "graduation-cap" | "book-open" | "external-link";
 };
 
+/**
+ * Toggle individual sections on/off without deleting the markup.
+ * `awards` defaults off until the user supplies real awards.
+ */
+export type SectionsConfig = {
+  about: { enabled: boolean };
+  education: { enabled: boolean };
+  experience: { enabled: boolean };
+  publications: { enabled: boolean };
+  awards: { enabled: boolean };
+  projects: { enabled: boolean };
+  skills: { enabled: boolean };
+};
+
 export const site = {
-  /** Used in <title>, OG tags, etc. */
+  /** Used in <title> + OG tags. */
   titleSuffix: "Xiao Chenyang",
   description:
-    "Undergraduate at BIT researching Spiking Neural Networks and image generation.",
+    "Undergraduate at Beijing Institute of Technology. Researching spiking neural networks and image generation.",
 
   name: {
     zh: "肖晨阳",
@@ -29,39 +36,43 @@ export const site = {
     enShort: "Xiao Chenyang",
   },
 
-  /** One-liner under the name in Hero. */
-  tagline:
-    "Undergraduate at BIT · Researching Spiking Neural Networks & generative models.",
+  /** Short identity line shown directly under the name in the sidebar. */
+  tagline: "Undergraduate at Beijing Institute of Technology.",
 
-  /** Optional avatar image path served from /public.  Leave empty to use
-   *  the gradient-block placeholder in Hero. */
-  avatar: "",
-  /** Initials shown inside the gradient block when avatar is empty. */
-  avatarInitials: "XC",
+  /** Second sidebar line, mixes light italics. Rendered with set:html so we
+   *  can italicise the research keywords inline. */
+  taglineSecondary:
+    'Researching <em>spiking neural networks</em> & <em>generative models</em>.',
 
   email: "xiaochenyang12138@gmail.com",
   github: "https://github.com/fengxuebailu",
-  /** Optional — leave empty string to hide the icon in Contact. */
+  /** Optional — empty string hides the row. */
   scholar: "",
   orcid: "",
 
-  /** Research-interest chips shown in the Research Interests section. */
+  /** Research-interest list shown as a sidebar bullet list. */
   researchInterests: [
     "Spiking Neural Networks",
     "Image Generation",
-    "Generative Models",
     "Computer Vision",
-    "Neuromorphic Computing",
   ],
 
-  /** Social row in Hero (icons only, no text on small screens). */
-  social: [
-    { label: "Email",   href: "mailto:xiaochenyang12138@gmail.com",     icon: "mail" },
-    { label: "GitHub",  href: "https://github.com/fengxuebailu",        icon: "github" },
-    // Uncomment & fill once user confirms scholar / orcid handles:
-    // { label: "Scholar", href: "https://scholar.google.com/citations?user=TODO", icon: "graduation-cap" },
-    // { label: "ORCID",   href: "https://orcid.org/TODO",                          icon: "book-open" },
-  ] satisfies SocialLink[],
+  /** Footer / sidebar last-updated stamp. Bump on each meaningful edit. */
+  lastUpdated: "2026-05",
+
+  /** Default theme on first visit (overrides system preference). */
+  defaultTheme: "light" as "light" | "dark",
+
+  /** Per-section enable flags. Flip `enabled: false` to hide. */
+  sections: {
+    about:        { enabled: true },
+    education:    { enabled: true },
+    experience:   { enabled: true },
+    publications: { enabled: true },
+    awards:       { enabled: false },
+    projects:     { enabled: true },
+    skills:       { enabled: true },
+  } satisfies SectionsConfig,
 } as const;
 
 export type Site = typeof site;

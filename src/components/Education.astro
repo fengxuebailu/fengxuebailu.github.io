@@ -1,45 +1,42 @@
 ---
 import { getCollection } from "astro:content";
-import Section from "./Section.astro";
+import SectionRow from "./SectionRow.astro";
 
 const items = (await getCollection("education")).sort(
   (a, b) => (b.data.order ?? 0) - (a.data.order ?? 0),
 );
 ---
 
-<Section id="education" title="Education">
-  <ol class="space-y-6 fade-stagger">
+<section id="education" class="fade-in">
+  <h2 class="section-h2 mb-6">Education</h2>
+  <ol class="space-y-1">
     {
       items.map((item) => (
-        <li class="relative pl-6">
-          <span class="absolute left-0 top-2 h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15" />
-          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <li>
+          <SectionRow date={item.data.period} sub={item.data.location}>
+            <div class="font-medium leading-snug" style="color: var(--fg);">
               {item.data.school}
-              {item.data.schoolZh && (
-                <span class="ml-1 font-normal text-zinc-500 dark:text-zinc-400">
-                  · {item.data.schoolZh}
-                </span>
-              )}
-            </h3>
-            <span class="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-              {item.data.period}
-            </span>
-          </div>
-          <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            {item.data.degree}
-            {item.data.department && <span> · {item.data.department}</span>}
-            {item.data.location && <span> · {item.data.location}</span>}
-          </p>
-          {item.data.notes && item.data.notes.length > 0 && (
-            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-400 marker:text-zinc-400 dark:marker:text-zinc-600">
-              {item.data.notes.map((n) => (
-                <li>{n}</li>
-              ))}
-            </ul>
-          )}
+            </div>
+            <div
+              class="text-[14px] mt-0.5 leading-snug"
+              style="color: var(--fg-muted);"
+            >
+              {item.data.degree}
+              {item.data.department && <span> · {item.data.department}</span>}
+            </div>
+            {item.data.notes && item.data.notes.length > 0 && (
+              <ul
+                class="mt-1 space-y-0.5 text-[13.5px]"
+                style="color: var(--fg-subtle);"
+              >
+                {item.data.notes.map((n) => (
+                  <li>— {n}</li>
+                ))}
+              </ul>
+            )}
+          </SectionRow>
         </li>
       ))
     }
   </ol>
-</Section>
+</section>

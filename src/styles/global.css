@@ -1,27 +1,21 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Theme tokens.  We use Tailwind v4's @theme directive to expose CSS vars
-   that Tailwind utility classes can read.  Light mode is default; the
-   `.dark` class on <html> flips them.
+   v2 — Read.cv / Stripe Press style. See docs/v2_brief_readcv.md.
+   - Two-column resume layout (sidebar + main flow).
+   - Single emerald accent, no purple gradients, no card shadows.
+   - Inter for sans, Newsreader for serif accents (loaded in Base.astro).
    ────────────────────────────────────────────────────────────────────────── */
+
 @theme {
   --font-sans:
-    "Inter", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
+    "Inter", "Inter var", "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif:
+    "Newsreader", "Source Serif 4", Georgia, serif;
   --font-mono:
-    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-  --color-accent-50: #ecfdf5;
-  --color-accent-100: #d1fae5;
-  --color-accent-200: #a7f3d0;
-  --color-accent-300: #6ee7b7;
-  --color-accent-400: #34d399;
-  --color-accent-500: #10b981;
-  --color-accent-600: #059669;
-  --color-accent-700: #047857;
-  --color-accent-800: #065f46;
-  --color-accent-900: #064e3b;
+    "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 }
 
 /* Dark mode triggered by `.dark` class on <html>. */
@@ -29,80 +23,199 @@
 
 :root {
   color-scheme: light;
+
+  --bg:           #fafaf9;   /* zinc-50 微暖 */
+  --bg-elevated:  #f4f4f3;   /* row hover */
+  --fg:           #18181b;   /* zinc-900 */
+  --fg-muted:     #52525b;   /* zinc-600 */
+  --fg-subtle:    #71717a;   /* zinc-500 */
+  --fg-faint:     #a1a1aa;   /* zinc-400 */
+  --hr:           rgb(228 228 231 / 0.7); /* zinc-200/70 */
+  --accent:       #059669;   /* emerald-600 */
+  --accent-hover: #047857;   /* emerald-700 */
+  --accent-soft:  #d1fae5;   /* emerald-100 */
+  --ring-offset:  #fafaf9;
 }
 
 html.dark {
   color-scheme: dark;
+
+  --bg:           #09090b;   /* zinc-950 */
+  --bg-elevated:  #18181b;   /* row hover */
+  --fg:           #fafafa;
+  --fg-muted:     #d4d4d8;   /* zinc-300 */
+  --fg-subtle:    #a1a1aa;   /* zinc-400 */
+  --fg-faint:     #71717a;   /* zinc-500 */
+  --hr:           rgb(39 39 42 / 0.6); /* zinc-800/60 */
+  --accent:       #34d399;   /* emerald-400 */
+  --accent-hover: #6ee7b7;   /* emerald-300 */
+  --accent-soft:  #064e3b;   /* emerald-900 */
+  --ring-offset:  #09090b;
 }
 
 html {
   font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-size: 15px;
   line-height: 1.7;
 }
 
-/* Selection color for both themes. */
-::selection {
-  background-color: var(--color-accent-200);
-  color: var(--color-accent-900);
+/* CJK figures should not wear tabular-num feature. */
+:lang(zh),
+:lang(zh-Hans),
+:lang(zh-CN) {
+  font-feature-settings: "tnum" off;
 }
-html.dark ::selection {
-  background-color: var(--color-accent-800);
-  color: var(--color-accent-100);
+
+/* Selection. */
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  color: var(--fg);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Fade-up entrance.  Uses CSS @starting-style — no JS, no layout thrash.
-   Falls back gracefully on older browsers (content just appears).
+   Page-enter via @starting-style (zero JS). Pure colour/opacity, no transform
+   on big blocks (brief §6 forbids transforms on layout elements).
    ────────────────────────────────────────────────────────────────────────── */
-.fade-up {
+.fade-in {
   opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 600ms ease,
-    transform 600ms ease;
+  transition: opacity 240ms ease;
 }
 @starting-style {
-  .fade-up {
+  .fade-in {
     opacity: 0;
-    transform: translateY(8px);
   }
 }
 
-/* Stagger helpers — apply on parent, children animate with cascading delay. */
-.fade-stagger > * {
-  animation: fadeUpKeyframe 600ms ease both;
+/* ──────────────────────────────────────────────────────────────────────────
+   Link family. Default: inherit colour; hover swaps to accent.
+   No glow, no underline animation, just colour transition (brief §6).
+   ────────────────────────────────────────────────────────────────────────── */
+.link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms ease, background-color 150ms ease;
 }
-.fade-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.fade-stagger > *:nth-child(2) { animation-delay: 80ms; }
-.fade-stagger > *:nth-child(3) { animation-delay: 160ms; }
-.fade-stagger > *:nth-child(4) { animation-delay: 240ms; }
-.fade-stagger > *:nth-child(5) { animation-delay: 320ms; }
-.fade-stagger > *:nth-child(6) { animation-delay: 400ms; }
-
-@keyframes fadeUpKeyframe {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.link:hover {
+  color: var(--accent);
 }
 
-/* Subtle link underline. */
-.prose-link {
+/* Underlined variant for inline prose links. */
+.link-underline {
+  color: inherit;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 25%, transparent);
-  text-underline-offset: 3px;
-  transition: text-decoration-color 150ms ease;
+  text-decoration-color: var(--hr);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
 }
-.prose-link:hover {
-  text-decoration-color: currentColor;
+.link-underline:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Focus-visible — emerald ring with proper offset against page bg.
+   ────────────────────────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Timeline row hover — full-row bg with negative inline padding so the
+   highlight bleeds beyond the text but the layout doesn't shift.
+   ────────────────────────────────────────────────────────────────────────── */
+.tl-row {
+  border-radius: 6px;
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem;
+  padding-block: 0.5rem;
+  transition: background-color 150ms ease;
+}
+.tl-row:hover {
+  background-color: var(--bg-elevated);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Sidebar uppercase small-caps — Stripe Press / Read.cv signature.
+   ────────────────────────────────────────────────────────────────────────── */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Section heading — main column h2.
+   ────────────────────────────────────────────────────────────────────────── */
+.section-h2 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Hairline divider between main sections. Used as <hr class="divider"/>.
+   The colour rule only — vertical margin comes from utility classes
+   (e.g. my-12) on the element itself.
+   ────────────────────────────────────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--hr);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SNN spike indicator — tiny emerald dot pulsing at ~10 Hz next to the name.
+   Pure CSS keyframes; respects reduced-motion. No transform on big elements,
+   only this 7-px dot, so it doesn't break the brief's "no transform" rule.
+   ────────────────────────────────────────────────────────────────────────── */
+.spike {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background-color: var(--accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+  animation: spike-pulse 1100ms cubic-bezier(0.32, 0, 0.67, 0) infinite;
+  vertical-align: middle;
+}
+@keyframes spike-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0   color-mix(in srgb, var(--accent) 60%, transparent); }
+  6%   { transform: scale(1.45); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 0%,  transparent); }
+  18%  { transform: scale(0.95); }
+  26%  { transform: scale(1.3);  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 0%,  transparent); }
+  40%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spike { animation: none; }
+}
+
+/* Theme transition — short fade on root, no flash. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+
+/* Inline italic muted helper for "(coming soon)" placeholders. */
+.muted-italic {
+  color: var(--fg-faint);
+  font-style: italic;
 }
