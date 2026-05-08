@@ -1,0 +1,118 @@
+---
+import { getCollection } from "astro:content";
+import Section from "./Section.astro";
+
+type LinkKind = "pdf" | "code" | "arxiv" | "project";
+
+const pubs = (await getCollection("publications")).sort((a, b) => {
+  const ao = a.data.order ?? Number(a.data.year);
+  const bo = b.data.order ?? Number(b.data.year);
+  return bo - ao;
+});
+
+/** Highlight the author whose name is followed by `*`. */
+function renderAuthors(raw: string): string {
+  return raw
+    .split(",")
+    .map((name) => {
+      const trimmed = name.trim();
+      if (trimmed.endsWith("*")) {
+        const bare = trimmed.slice(0, -1);
+        return `<span class="font-medium text-emerald-700 dark:text-emerald-400">${bare}</span><span class="text-emerald-500">*</span>`;
+      }
+      return trimmed;
+    })
+    .join(", ");
+}
+
+const linkLabels: Record<LinkKind, string> = {
+  pdf: "PDF",
+  code: "Code",
+  arxiv: "arXiv",
+  project: "Project",
+};
+---
+
+<Section
+  id="publications"
+  title="Publications"
+  subtitle="* denotes my contribution."
+>
+  <!-- Bilingual notice banner -->
+  <div
+    class="mb-6 rounded-lg border border-amber-200 bg-amber-50/70 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200 fade-up"
+  >
+    <p class="font-medium">
+      Updated as papers come in — placeholders below.
+    </p>
+    <p class="mt-0.5 text-amber-700 dark:text-amber-300/90">
+      论文逐步更新，下方为占位条目。
+    </p>
+  </div>
+
+  <ol class="space-y-4 fade-stagger">
+    {
+      pubs.map((p) => {
+        const links: { kind: LinkKind; href: string }[] = (
+          ["pdf", "code", "arxiv", "project"] as LinkKind[]
+        ).map((k) => ({ kind: k, href: (p.data[k] as string) ?? "" }));
+        const isPlaceholder = p.data.placeholder;
+
+        return (
+          <li
+            class:list={[
+              "rounded-xl border p-5 transition",
+              isPlaceholder
+                ? "border-dashed border-zinc-300 bg-white/50 dark:border-zinc-700 dark:bg-zinc-900/40"
+                : "border-zinc-200 bg-white shadow-sm hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700",
+            ]}
+          >
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+                {p.data.title}
+              </h3>
+              <span class="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                {p.data.year}
+              </span>
+            </div>
+            <p
+              class="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
+              set:html={renderAuthors(p.data.authors)}
+            />
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              <span class="italic">{p.data.venue}</span>
+              {p.data.status && (
+                <span class="ml-2 rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-[11px] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+                  {p.data.status}
+                </span>
+              )}
+            </p>
+
+            <div class="mt-3 flex flex-wrap gap-2">
+              {links.map(({ kind, href }) => {
+                const enabled = href && href.length > 0;
+                return enabled ? (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 transition hover:border-emerald-500/40 hover:text-emerald-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-emerald-400/40 dark:hover:text-emerald-400"
+                  >
+                    {linkLabels[kind]}
+                  </a>
+                ) : (
+                  <span
+                    title="TODO: link not available yet"
+                    class="inline-flex cursor-not-allowed items-center rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-600"
+                  >
+                    {linkLabels[kind]}
+                  </span>
+                );
+              })}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+</Section>

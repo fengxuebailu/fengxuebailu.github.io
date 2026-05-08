@@ -1,0 +1,60 @@
+---
+import "../styles/global.css";
+import { site } from "../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} · ${site.titleSuffix}` : site.titleSuffix;
+const pageDesc = description ?? site.description;
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en" class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+    <link rel="sitemap" href={`${baseUrl}sitemap-index.xml`} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:type" content="website" />
+
+    <!-- Fonts: Inter for Latin, Noto Sans SC for CJK -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- Theme bootstrap: read saved preference before paint to avoid flash. -->
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          const theme = stored ?? (prefersDark ? "dark" : "light");
+          if (theme === "dark") document.documentElement.classList.add("dark");
+        } catch (_) {
+          /* noop */
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen antialiased">
+    <slot />
+  </body>
+</html>

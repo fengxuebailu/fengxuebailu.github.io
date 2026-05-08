@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import Section from "./Section.astro";
+
+const items = (await getCollection("news")).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date),
+);
+---
+
+<Section id="news" title="News">
+  <ol class="space-y-3 fade-stagger">
+    {
+      items.map((n) => (
+        <li class="grid grid-cols-[7rem_1fr] items-baseline gap-x-4 text-sm">
+          <span class="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+            {n.data.date}
+          </span>
+          <span
+            class:list={[
+              "leading-relaxed",
+              n.data.placeholder
+                ? "text-zinc-500 italic dark:text-zinc-400"
+                : "text-zinc-700 dark:text-zinc-300",
+            ]}
+          >
+            {n.data.summary}
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+</Section>

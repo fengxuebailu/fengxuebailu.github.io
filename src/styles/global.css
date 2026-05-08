@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Theme tokens.  We use Tailwind v4's @theme directive to expose CSS vars
+   that Tailwind utility classes can read.  Light mode is default; the
+   `.dark` class on <html> flips them.
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans:
+    "Inter", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-accent-50: #ecfdf5;
+  --color-accent-100: #d1fae5;
+  --color-accent-200: #a7f3d0;
+  --color-accent-300: #6ee7b7;
+  --color-accent-400: #34d399;
+  --color-accent-500: #10b981;
+  --color-accent-600: #059669;
+  --color-accent-700: #047857;
+  --color-accent-800: #065f46;
+  --color-accent-900: #064e3b;
+}
+
+/* Dark mode triggered by `.dark` class on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  line-height: 1.7;
+}
+
+/* Selection color for both themes. */
+::selection {
+  background-color: var(--color-accent-200);
+  color: var(--color-accent-900);
+}
+html.dark ::selection {
+  background-color: var(--color-accent-800);
+  color: var(--color-accent-100);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Fade-up entrance.  Uses CSS @starting-style — no JS, no layout thrash.
+   Falls back gracefully on older browsers (content just appears).
+   ────────────────────────────────────────────────────────────────────────── */
+.fade-up {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease;
+}
+@starting-style {
+  .fade-up {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Stagger helpers — apply on parent, children animate with cascading delay. */
+.fade-stagger > * {
+  animation: fadeUpKeyframe 600ms ease both;
+}
+.fade-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.fade-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.fade-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.fade-stagger > *:nth-child(4) { animation-delay: 240ms; }
+.fade-stagger > *:nth-child(5) { animation-delay: 320ms; }
+.fade-stagger > *:nth-child(6) { animation-delay: 400ms; }
+
+@keyframes fadeUpKeyframe {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle link underline. */
+.prose-link {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 25%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 150ms ease;
+}
+.prose-link:hover {
+  text-decoration-color: currentColor;
+}
