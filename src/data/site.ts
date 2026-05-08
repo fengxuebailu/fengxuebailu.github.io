@@ -24,9 +24,9 @@ export const site = {
     "Undergraduate at BIT researching Spiking Neural Networks and image generation.",
 
   name: {
-    zh: "[Your Name 你的姓名]",
+    zh: "肖晨阳",
     enFull: "Xiao Chenyang",
-    enShort: "Xiao", // for footer
+    enShort: "Xiao Chenyang",
   },
 
   /** One-liner under the name in Hero. */
